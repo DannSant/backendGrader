@@ -38,7 +38,7 @@ app.get('/exam', function(req, res) {
       filter={ status: true,author:user }
     }
 
-    Exam.find({ status: true })
+    Exam.find(filter)
         .skip(desde)
         .limit(limite)
         .exec((error, exams) => {
@@ -51,7 +51,7 @@ app.get('/exam', function(req, res) {
                 })
             }
 
-            Exam.count({ status: true }, (e, conteo) => {
+            Exam.count(filter, (e, conteo) => {
                 res.json({
                     ok: true,
                     records: conteo,
@@ -61,11 +61,32 @@ app.get('/exam', function(req, res) {
         });
 });
 
+app.get('/exam/:id', function(req, res) {
+    let code = req.params.id;
+
+    Exam.findOne({_id:code})
+        .exec((error, examDB) => {
+            if (error) {
+                return res.status(500).json({
+                    ok: false,
+                    data:null,
+                    error
+                })
+            }
+
+            res.json({
+                ok: true,
+                data:examDB
+            })
+        });
+});
+
 //===========================
 //Peticiones POST
 //===========================
 app.post('/exam', function(req, res) {
   let body = req.body;
+  //console.log(req);
   let exam = new Exam({
         name: body.name,
         desc: body.desc,
@@ -90,7 +111,7 @@ app.post('/exam', function(req, res) {
         }
         res.json({
             ok: true,
-            exam: examDB
+            data: examDB
         });
       });
   });
@@ -126,7 +147,7 @@ app.put('/exam/:id', function(req, res) {
 //===========================
 //Peticiones DELETE
 //===========================
-app.delete('/exam/:id', function(req, res) {
+app.post('/exam/delete/:id', function(req, res) {
     let id = req.params.id;
 
     let body = _.pick(req.body, ['status']);
