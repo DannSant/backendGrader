@@ -25,8 +25,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json());
 
 //Rutas
-app.use(require('./routes/exams'));
-app.use(require('./routes/users'));
+app.use(require('./routes/index'));
 
 //Inicio de server
 app.listen(process.env.PORT, () => {
